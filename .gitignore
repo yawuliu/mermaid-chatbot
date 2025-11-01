@@ -1,0 +1,3 @@
+corpus/backups
+*.exe
+go.sum

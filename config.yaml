@@ -1,0 +1,5 @@
+corpus_path: "./corpus"
+default_response: "抱歉，我没明白您的意思。"
+match_threshold: 70
+enable_auto_backup: true    # 启用自动备份
+max_backup_files: 10        # 最多保留10个备份文件
