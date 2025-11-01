@@ -121,20 +121,40 @@ func (p *MermaidParser) containsEdge(line string) bool {
 	return strings.Contains(line, "-->")
 }
 
+// cleanNodeText 清理节点文本中的引号
+func (p *MermaidParser) cleanNodeText(text string) string {
+	if text == "" {
+		return text
+	}
+
+	// 移除首尾的引号（如果存在）
+	cleaned := strings.Trim(text, `"`)
+
+	// 如果清理后为空，返回原始文本
+	if cleaned == "" {
+		return text
+	}
+
+	return cleaned
+}
+
 // 增强节点解析
 func (p *MermaidParser) parseNode(line string, graph *Graph) {
 	// 匹配类似: A[你好] 或 A[P:你好]
-	re := regexp.MustCompile(`(\w+)\[([^\]]+)\]`)
+	re := regexp.MustCompile(`(\w+)\[("[^"]*"|[^\]]+)\]`)
 	matches := re.FindAllStringSubmatch(line, -1)
 
 	for _, match := range matches {
 		if len(match) == 3 {
 			nodeID := match[1]
 			nodeText := match[2]
+			// 清理节点文本中的引号
+			cleanedText := p.cleanNodeText(nodeText)
+
 			if p.debug {
-				log.Printf("    解析到节点: ID=%s, Text=%s", nodeID, nodeText)
+				log.Printf("    解析到节点: ID=%s, Text=%s, Cleaned=%s", nodeID, nodeText, cleanedText)
 			}
-			graph.AddNode(nodeID, nodeText)
+			graph.AddNode(nodeID, cleanedText)
 		}
 	}
 }

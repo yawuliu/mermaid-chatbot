@@ -70,11 +70,75 @@ func (w *AdvancedMermaidWriter) collectAllNodes(categories []model.Category) []s
 	return nodes
 }
 
+// cleanNodeText 清理节点文本，移除多余的引号并确保格式正确
+func (w *AdvancedMermaidWriter) cleanNodeText(text string) string {
+	if text == "" {
+		return text
+	}
+
+	// 移除首尾的多余引号
+	cleaned := strings.Trim(text, `"`)
+
+	// 如果文本包含特殊字符或空格，需要引号，但要确保不重复
+	if w.needsQuotes(cleaned) {
+		// 确保不会变成 """文本""" 这样的形式
+		if !strings.HasPrefix(cleaned, `"`) || !strings.HasSuffix(cleaned, `"`) {
+			cleaned = `"` + cleaned + `"`
+		}
+	}
+
+	return cleaned
+}
+
+// needsQuotes 检查文本是否需要引号
+func (w *AdvancedMermaidWriter) needsQuotes(text string) bool {
+	if text == "" {
+		return false
+	}
+
+	// 如果包含以下字符，需要引号
+	specialChars := []string{" ", "-", ">", "<", "[", "]", "(", ")", "{", "}", ",", ".", "!", "?"}
+	for _, char := range specialChars {
+		if strings.Contains(text, char) {
+			return true
+		}
+	}
+
+	// 如果是纯英文数字，可能不需要引号
+	if w.isSimpleText(text) {
+		return false
+	}
+
+	// 中文文本通常需要引号
+	return w.containsChinese(text)
+}
+
+// isSimpleText 检查是否为简单的英文数字文本
+func (w *AdvancedMermaidWriter) isSimpleText(text string) bool {
+	for _, r := range text {
+		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && (r < '0' || r > '9') && r != '_' {
+			return false
+		}
+	}
+	return true
+}
+
+// containsChinese 检查是否包含中文字符
+func (w *AdvancedMermaidWriter) containsChinese(text string) bool {
+	for _, r := range text {
+		if r >= '\u4e00' && r <= '\u9fff' {
+			return true
+		}
+	}
+	return false
+}
+
 // generateNodeDefinitions 生成所有节点的定义
 func (w *AdvancedMermaidWriter) generateNodeDefinitions(builder *strings.Builder, nodes []string) {
 	for _, content := range nodes {
 		nodeID := w.getNodeID(content)
-		builder.WriteString(fmt.Sprintf("    %s[\"%s\"]\n", nodeID, content))
+		cleanedContent := w.cleanNodeText(content)
+		builder.WriteString(fmt.Sprintf("    %s[%s]\n", nodeID, cleanedContent))
 	}
 	builder.WriteString("\n")
 }

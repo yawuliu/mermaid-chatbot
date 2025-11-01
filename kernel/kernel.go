@@ -14,7 +14,7 @@ type Kernel struct {
 	categoriesLock     sync.RWMutex
 	config             *config.Config
 	matcher            Matcher
-	updateManager      *CorpusUpdateManager
+	updateManager      *FSMManager // 使用FSM管理器
 	persistenceManager *PersistenceManager
 }
 
@@ -23,7 +23,7 @@ func NewKernel() *Kernel {
 		categories: make([]model.Category, 0),
 		matcher:    NewDefaultMatcher(),
 	}
-	k.updateManager = NewCorpusUpdateManager(k)
+	k.updateManager = NewFSMManager(k) // 使用FSM管理器
 	return k
 }
 
