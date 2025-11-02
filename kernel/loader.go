@@ -70,6 +70,42 @@ func (k *Kernel) loadMermaidCorpus(corpusPath string) error {
 	return nil
 }
 
+func isConditionalMermaidFile(filename string) bool {
+	return isMermaidFile(filename)
+}
+
+func (k *Kernel) loadConditionalCorpus(corpusPath string) error {
+	files, err := os.ReadDir(corpusPath)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if isConditionalMermaidFile(file.Name()) {
+			filePath := corpusPath + "/" + file.Name()
+			content, err := os.ReadFile(filePath)
+			if err != nil {
+				log.Printf("警告: 无法读取文件 %s: %v", filePath, err)
+				continue
+			}
+
+			categories, err := parser.ParseConditionalMermaid(string(content))
+			if err != nil {
+				log.Printf("警告: 解析条件文件 %s 失败: %v", filePath, err)
+				continue
+			}
+
+			for _, category := range categories {
+				k.AddConditionalCategory(category)
+			}
+
+			log.Printf("从 %s 加载了 %d 个条件分类", file.Name(), len(categories))
+		}
+	}
+
+	return nil
+}
+
 //	func loadMermaidCorpus(kernel *kernel.Kernel, corpusPath string) int {
 //		log.Printf("开始加载语料库，路径: %s", corpusPath)
 //		// 检查目录是否存在
@@ -130,7 +166,7 @@ func (k *Kernel) ReloadCorpus() error {
 	k.categories = make([]model.Category, 0)
 	k.categoriesLock.Unlock()
 
-	return k.loadMermaidCorpus(k.config.CorpusPath)
+	return k.loadConditionalCorpus(k.config.CorpusPath)
 }
 
 // ReloadCorpus 重新加载语料库

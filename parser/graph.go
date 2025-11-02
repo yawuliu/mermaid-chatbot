@@ -4,19 +4,25 @@ package parser
 import "log"
 
 type Node struct {
-	ID   string
-	Text string
+	ID            string
+	Text          string
+	IsPattern     bool
+	IsCondition   bool
+	ConditionType string
+	ConditionName string
 }
 
 type Graph struct {
-	Nodes map[string]*Node
-	Edges map[string][]string // from -> to nodes
+	Nodes          map[string]*Node
+	Edges          map[string][]string          // from -> to nodes
+	EdgeConditions map[string]map[string]string // from -> (to -> condition_value)
 }
 
 func NewGraph() *Graph {
 	return &Graph{
-		Nodes: make(map[string]*Node),
-		Edges: make(map[string][]string),
+		Nodes:          make(map[string]*Node),
+		Edges:          make(map[string][]string),
+		EdgeConditions: make(map[string]map[string]string),
 	}
 }
 

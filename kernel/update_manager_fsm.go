@@ -156,7 +156,7 @@ func (m *FSMManager) DebugSessions() string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("当前活跃会话数: %d\n", len(m.userFSMs)))
 	for userID, fsm := range m.userFSMs {
-		builder.WriteString(fmt.Sprintf("用户: %s, 状态: %d, 最后活动: %v\n",
+		builder.WriteString(fmt.Sprintf("用户: %s, 状态: %v, 最后活动: %v\n",
 			userID, fsm.session.State, fsm.session.LastActive))
 	}
 	return builder.String()

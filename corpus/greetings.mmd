@@ -13,6 +13,11 @@ flowchart TD
     GO["我是一个用Go编写的智能助手"]
     MER["我是基于Mermaid语料的聊天机器人"]
     N12["谢谢"]
+    A[I AM *] --> B{Condition: predicate isanumber}
+    B -->|true| C[<srai>MY AGE IS <star/></srai>]
+    B -->|*| D{Condition: predicate isaname}
+    D -->|true| E[<srai>MY NAME IS <star/></srai>]
+    D -->|*| F[<srai>IAMRESPONSE</srai>]
 
     N6 --> N8
     N6 --> N7
