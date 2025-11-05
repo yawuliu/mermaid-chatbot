@@ -1,5 +1,38 @@
-corpus_path: "./corpus"
-default_response: "抱歉，我没明白您的意思。"
-match_threshold: 70
-enable_auto_backup: true    # 启用自动备份
-max_backup_files: 10        # 最多保留10个备份文件
+version: "1.0"
+bot:
+  name: "DeepSeek"
+  version: "1.0"
+  default_topic: "general"
+
+variables:
+  system:
+    user_name: "unknown"
+    current_topic: "general"
+    weather: "unknown"
+    temperature: "unknown"
+    corpus_path: "./corpus"
+    default_response: "抱歉，我没明白您的意思。"
+    match_threshold: 70
+    enable_auto_backup: true    # 启用自动备份
+    max_backup_files: 10        # 最多保留10个备份文件
+
+patterns:
+  - id: "greeting"
+    type: "exact"
+    content: ["你好", "嗨", "hello", "hi"]
+    priority: 10
+
+  - id: "name_query"
+    type: "contains"
+    content: ["你叫什么", "你是谁", "你的名字"]
+    priority: 9
+
+  - id: "weather_query"
+    type: "pattern"
+    content: ["今天天气怎么样", "天气如何", "天气预报"]
+    priority: 8
+
+  - id: "set_name"
+    type: "pattern"
+    content: ["我叫*", "我的名字是*", "我是*"]
+    priority: 7

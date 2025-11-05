@@ -1,0 +1,31 @@
+graph TD
+%% 基础问候
+    Q_GREETING["greeting<br/>你好/嗨/hello"] --> A_GREETING["greeting_response<br/>你好！我是AI助手"]
+
+%% 身份询问
+    Q_NAME["name_query<br/>你叫什么名字/你是谁"] --> A_NAME["name_response<br/>我叫DeepSeek助手"]
+
+%% 条件天气查询
+    Q_WEATHER["weather_query<br/>今天天气怎么样"] --> C_WEATHER{weather_known}
+    C_WEATHER -->|true| A_WEATHER_KNOWN["weather_known_response<br/>今天天气<get weather>"]
+    C_WEATHER -->|false| A_WEATHER_UNKNOWN["weather_unknown_response<br/>我不知道天气情况"]
+
+%% 变量设置
+    Q_SET_NAME["set_name<br/>我叫*"] --> S_SET_NAME["set_name_var<br/>set:user_name=$1"]
+    S_SET_NAME --> A_SET_NAME["set_name_response<br/>你好，<get user_name>"]
+
+%% 主题切换
+    Q_MOVIES["switch_movies<br/>聊电影/电影话题"] --> T_MOVIES["set_movie_topic<br/>topic:movies"]
+    T_MOVIES --> A_MOVIES["movie_response<br/>好的，切换到电影话题"]
+
+    classDef question fill:#e1f5fe,stroke:#01579b
+    classDef answer fill:#f3e5f5,stroke:#4a148c
+    classDef condition fill:#fff3e0,stroke:#e65100
+    classDef variable fill:#e8f5e8,stroke:#1b5e20
+    classDef topic fill:#fce4ec,stroke:#880e4f
+
+    class Q_GREETING,Q_NAME,Q_WEATHER,Q_SET_NAME,Q_MOVIES question
+    class A_GREETING,A_NAME,A_WEATHER_KNOWN,A_WEATHER_UNKNOWN,A_SET_NAME,A_MOVIES answer
+    class C_WEATHER condition
+    class S_SET_NAME variable
+    class T_MOVIES topic

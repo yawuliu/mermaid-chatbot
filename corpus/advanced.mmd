@@ -1,0 +1,23 @@
+graph TD
+%% 多轮对话 - 餐厅推荐
+    Q_RESTAURANT["restaurant_query<br/>推荐餐厅/吃饭的地方"] --> C_LOCATION{user_location}
+
+    C_LOCATION -->|known| Q_CUISINE["cuisine_preference<br/>您喜欢什么菜系?"]
+    C_LOCATION -->|unknown| A_ASK_LOCATION["ask_location<br/>您在哪个区域?"]
+
+    Q_CUISINE --> A_CHINESE["chinese_restaurant<br/>推荐您去老北京餐厅<br/>set:restaurant=老北京"]
+    Q_CUISINE --> A_WESTERN["western_restaurant<br/>推荐您去西餐厅<br/>set:restaurant=西餐厅"]
+
+    A_CHINESE --> Q_BOOK["book_query<br/>需要帮您预订吗?"]
+    A_WESTERN --> Q_BOOK
+
+    Q_BOOK -->|yes| A_BOOK_SUCCESS["book_success<br/>已为您预订<get restaurant>"]
+    Q_BOOK -->|no| A_BOOK_SKIP["book_skip<br/>好的，祝您用餐愉快"]
+
+    classDef question fill:#e1f5fe,stroke:#01579b
+    classDef answer fill:#f3e5f5,stroke:#4a148c
+    classDef condition fill:#fff3e0,stroke:#e65100
+
+    class Q_RESTAURANT,Q_CUISINE,Q_BOOK question
+    class A_ASK_LOCATION,A_CHINESE,A_WESTERN,A_BOOK_SUCCESS,A_BOOK_SKIP answer
+    class C_LOCATION condition
